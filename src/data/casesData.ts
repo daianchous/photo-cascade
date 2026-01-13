@@ -84,7 +84,7 @@ export const generateCases = (count: number): CaseData[] => {
   });
 };
 
-export const cases = generateCases(120);
+export const cases = generateCases(15);
 
 // Calculate tag counts dynamically
 export const getTagCounts = (caseData: CaseData[]): Record<string, number> => {

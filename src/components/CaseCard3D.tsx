@@ -49,11 +49,11 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   useFrame((state, delta) => {
     if (!meshRef.current || !materialRef.current) return;
     
-    const lerpSpeed = 6 * delta;
+    // Slower lerp for smoother animation
+    const lerpSpeed = 3 * delta;
     
     if (isHovered) {
-      // Hovered card: move to center of screen and scale up massively
-      // Calculate screen center position in world space
+      // Hovered card: move to center of screen and scale up
       const centerX = camera.position.x + 8;
       const centerY = camera.position.y - 5;
       const centerZ = camera.position.z - 25;
@@ -66,7 +66,7 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
       currentValues.current.rotX += (0 - currentValues.current.rotX) * lerpSpeed;
       currentValues.current.rotY += (0 - currentValues.current.rotY) * lerpSpeed;
     } else if (anyHovered) {
-      // Other cards when something is hovered: fade out completely
+      // Other cards when something is selected: fade out
       currentValues.current.posX += (basePosition.x - currentValues.current.posX) * lerpSpeed;
       currentValues.current.posY += (basePosition.y - currentValues.current.posY) * lerpSpeed;
       currentValues.current.posZ += (basePosition.z - 3 - currentValues.current.posZ) * lerpSpeed;
@@ -99,17 +99,26 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   // Parse color
   const color = useMemo(() => new THREE.Color(caseData.color), [caseData.color]);
   
+  // Handle click to toggle selection
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    if (isHovered) {
+      // Clicking again deselects
+      setHoveredCaseId(null);
+    } else {
+      setHoveredCaseId(caseData.id);
+    }
+  };
+  
   return (
     <group
       ref={meshRef}
       position={[basePosition.x, basePosition.y, basePosition.z]}
-      onPointerEnter={(e) => {
-        e.stopPropagation();
-        setHoveredCaseId(caseData.id);
+      onClick={handleClick}
+      onPointerEnter={() => {
         document.body.style.cursor = 'pointer';
       }}
       onPointerLeave={() => {
-        setHoveredCaseId(null);
         document.body.style.cursor = 'auto';
       }}
     >
