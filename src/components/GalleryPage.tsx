@@ -35,7 +35,6 @@ const GalleryPage = () => {
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
       // Progress 0-2 over first 200vh (hero + gallery sections)
-      const maxScroll = window.innerHeight * 2;
       const progress = Math.min(2, scrollTop / window.innerHeight);
       setScrollProgress(progress);
     };
