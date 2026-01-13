@@ -4,9 +4,12 @@ import { useScrollProgress } from '@/hooks/useScrollProgress';
 const HeroSection = () => {
   const scrollProgress = useScrollProgress((state) => state.scrollProgress);
   
-  // Fade out hero content as we scroll
-  const heroOpacity = Math.max(0, 1 - scrollProgress * 2);
-  const heroTranslateY = scrollProgress * -100;
+  // Fade out hero content as we scroll into gallery section
+  const heroOpacity = Math.max(0, 1 - scrollProgress * 1.5);
+  const heroTranslateY = scrollProgress * -80;
+  
+  // Don't render if fully faded
+  if (heroOpacity < 0.01) return null;
   
   return (
     <div 
