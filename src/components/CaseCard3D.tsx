@@ -132,13 +132,17 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
   
   // Check if we're in gallery mode for interactions
   const inGalleryMode = scrollProgress > 0.25;
-  
+
   // Handle click to toggle selection
   const handleClick = (e: any) => {
     e.stopPropagation();
+
+    // Debug: ensure clicks reach the mesh
+    console.log('[CaseCard3D click]', { id: caseData.id, scrollProgress, inGalleryMode });
+
     // Only allow interaction when in gallery mode
     if (!inGalleryMode) return;
-    
+
     if (isHovered) {
       setHoveredCaseId(null);
     } else {

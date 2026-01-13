@@ -55,7 +55,13 @@ const GalleryPage = () => {
       transition={{ duration: 0.8 }}
     >
       {/* Fixed 3D canvas layer that responds to scroll */}
-      <div className="fixed inset-0 z-10">
+      <div
+        className="fixed inset-0 z-10"
+        onWheel={(e) => {
+          // Ensure scrolling still works even though this fixed layer sits above the scroller
+          containerRef.current?.scrollBy({ top: e.deltaY });
+        }}
+      >
         {/* Grid background */}
         <GridBackground />
         
