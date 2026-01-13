@@ -18,11 +18,11 @@ const CameraController = () => {
   const targetLookAt = useRef(new THREE.Vector3(0, 1, 0));
   
   useEffect(() => {
-    if (hoveredCaseId && scrollProgress > 0.8) {
+    if (hoveredCaseId && scrollProgress > 0.25) {
       // Zoom in when a card is selected in gallery mode
       targetPosition.current.set(0, 0, 16);
       targetLookAt.current.set(0, 0, 0);
-    } else if (scrollProgress > 0.8) {
+    } else if (scrollProgress > 0.25) {
       // Gallery view
       targetPosition.current.set(0, 0, 20);
       targetLookAt.current.set(0, 0, 0);

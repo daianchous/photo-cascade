@@ -54,12 +54,12 @@ const GalleryPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Fixed 3D canvas that responds to scroll - pointer-events-none to allow scroll through */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Fixed 3D canvas layer that responds to scroll */}
+      <div className="fixed inset-0">
         {/* Grid background */}
         <GridBackground />
         
-        {/* 3D Gallery Canvas - needs pointer events for card clicks */}
+        {/* 3D Gallery Canvas */}
         <div className="pointer-events-auto">
           <Suspense fallback={
             <div className="absolute inset-0 flex items-center justify-center">
