@@ -5,7 +5,6 @@ import CaseMenu from './CaseMenu';
 import GridBackground from './GridBackground';
 import Tagline from './Tagline';
 import HeroSection from './HeroSection';
-import TextSection from './TextSection';
 import { useGalleryState } from '@/hooks/useGalleryState';
 import { useScrollProgress } from '@/hooks/useScrollProgress';
 
@@ -27,7 +26,7 @@ const GalleryPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [clearSelection]);
   
-  // Scroll handler
+  // Scroll handler - now 0 to 1 range for 2 sections
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -35,7 +34,7 @@ const GalleryPage = () => {
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight - container.clientHeight;
-      const progress = scrollTop / scrollHeight * 2; // 0 to 2 range
+      const progress = scrollTop / scrollHeight; // 0 to 1 range
       setScrollProgress(progress);
     };
     
@@ -44,8 +43,8 @@ const GalleryPage = () => {
   }, [setScrollProgress]);
 
   // Determine which UI elements to show based on scroll
-  const showCaseMenu = scrollProgress > 0.6;
-  const showTagline = scrollProgress > 0.6 && scrollProgress < 1.5;
+  const showCaseMenu = scrollProgress > 0.3;
+  const showTagline = scrollProgress > 0.3;
 
   return (
     <motion.div 
@@ -80,9 +79,6 @@ const GalleryPage = () => {
         {/* Hero section overlay */}
         <HeroSection />
         
-        {/* Text section overlay */}
-        <TextSection />
-        
         {/* Case menu on right side - only in gallery mode */}
         {showCaseMenu && (
           <div className="pointer-events-auto">
@@ -94,8 +90,8 @@ const GalleryPage = () => {
         {showTagline && <Tagline />}
       </div>
       
-      {/* Scrollable content wrapper - 3 sections (invisible but creates scroll height) */}
-      <div className="relative" style={{ height: '300vh' }} />
+      {/* Scrollable content wrapper - 2 sections (invisible but creates scroll height) */}
+      <div className="relative" style={{ height: '200vh' }} />
     </motion.div>
   );
 };
