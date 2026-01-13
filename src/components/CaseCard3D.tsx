@@ -134,11 +134,14 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
   // Pink/magenta accent color for selected border
   const accentColor = useMemo(() => new THREE.Color('hsl(300, 60%, 70%)'), []);
   
+  // Check if we're in gallery mode for interactions
+  const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
+  
   // Handle click to toggle selection
   const handleClick = (e: any) => {
     e.stopPropagation();
     // Only allow interaction when in gallery mode
-    if (scrollProgress < 0.8) return;
+    if (!inGalleryMode) return;
     
     if (isHovered) {
       setHoveredCaseId(null);
@@ -154,7 +157,7 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
       rotation={[0, 0.3, 0]}
       onClick={handleClick}
       onPointerEnter={() => {
-        if (scrollProgress >= 0.8) document.body.style.cursor = 'pointer';
+        if (inGalleryMode) document.body.style.cursor = 'pointer';
       }}
       onPointerLeave={() => {
         document.body.style.cursor = 'auto';

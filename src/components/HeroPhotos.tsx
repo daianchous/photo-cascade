@@ -45,6 +45,9 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
   const colorObj = useMemo(() => new THREE.Color(color), [color]);
   const accentColor = useMemo(() => new THREE.Color('hsl(300, 60%, 70%)'), []);
   
+  // Gallery is active when scrollProgress > 0.5 and < 1.8
+  const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
+  
   const currentValues = useRef({
     scale: 1,
     opacity: 1,
@@ -145,7 +148,7 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
   const handleClick = (e: any) => {
     e.stopPropagation();
     // Only allow interaction when in gallery mode
-    if (scrollProgress < 0.8) return;
+    if (!inGalleryMode) return;
     
     if (isHovered) {
       setHoveredCaseId(null);
@@ -159,7 +162,7 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       ref={meshRef}
       onClick={handleClick}
       onPointerEnter={() => {
-        if (scrollProgress >= 0.8) document.body.style.cursor = 'pointer';
+        if (inGalleryMode) document.body.style.cursor = 'pointer';
       }}
       onPointerLeave={() => {
         document.body.style.cursor = 'auto';
