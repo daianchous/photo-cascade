@@ -11,14 +11,14 @@ const CameraController = () => {
   const { camera } = useThree();
   const { hoveredCaseId, activeTag } = useGalleryState();
   
-  const targetPosition = useRef(new THREE.Vector3(-15, 20, 45));
-  const targetLookAt = useRef(new THREE.Vector3(20, 15, 0));
+  const targetPosition = useRef(new THREE.Vector3(-2, 5, 25));
+  const targetLookAt = useRef(new THREE.Vector3(3, 2, 0));
   
   useEffect(() => {
     if (hoveredCaseId) {
-      // Slight camera adjustment when hovering - keep it subtle
-      targetPosition.current.set(-12, 18, 42);
-      targetLookAt.current.set(15, 12, 0);
+      // Slight camera adjustment when selected
+      targetPosition.current.set(0, 4, 22);
+      targetLookAt.current.set(3, 2, 0);
     } else if (activeTag !== 'all') {
       // Find center of matching cards
       const matchingIndices = cases
@@ -31,13 +31,13 @@ const CameraController = () => {
         const x = avgIndex * spacing;
         const y = avgIndex * spacing * 0.5;
         
-        targetPosition.current.set(x - 10, y + 10, 35);
-        targetLookAt.current.set(x + 5, y + 5, 0);
+        targetPosition.current.set(x - 3, y + 3, 20);
+        targetLookAt.current.set(x + 2, y + 1, 0);
       }
     } else {
-      // Default wide view
-      targetPosition.current.set(-15, 20, 45);
-      targetLookAt.current.set(20, 15, 0);
+      // Default centered view for 15 photos
+      targetPosition.current.set(-2, 5, 25);
+      targetLookAt.current.set(3, 2, 0);
     }
   }, [hoveredCaseId, activeTag]);
   
@@ -102,7 +102,7 @@ const CaseGallery3D = () => {
       >
         <PerspectiveCamera
           makeDefault
-          position={[-15, 20, 45]}
+          position={[-2, 5, 25]}
           fov={45}
           near={0.1}
           far={500}
