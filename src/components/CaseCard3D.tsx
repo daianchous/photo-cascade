@@ -13,6 +13,7 @@ interface CaseCard3DProps {
 const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   const meshRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
+  const borderMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
   const { camera } = useThree();
   const { hoveredCaseId, activeTag, setHoveredCaseId } = useGalleryState();
   
@@ -47,7 +48,7 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   
   // Animate card properties smoothly
   useFrame((state, delta) => {
-    if (!meshRef.current || !materialRef.current) return;
+    if (!meshRef.current || !materialRef.current || !borderMaterialRef.current) return;
     
     // Slower lerp for smoother animation
     const lerpSpeed = 3 * delta;
@@ -66,7 +67,7 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
       currentValues.current.rotX += (0 - currentValues.current.rotX) * lerpSpeed;
       currentValues.current.rotY += (0 - currentValues.current.rotY) * lerpSpeed;
     } else if (anyHovered) {
-      // Other cards when something is selected: fade out
+      // Other cards when something is selected: fade out completely
       currentValues.current.posX += (basePosition.x - currentValues.current.posX) * lerpSpeed;
       currentValues.current.posY += (basePosition.y - currentValues.current.posY) * lerpSpeed;
       currentValues.current.posZ += (basePosition.z - 3 - currentValues.current.posZ) * lerpSpeed;
@@ -93,7 +94,10 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
       currentValues.current.posZ
     );
     meshRef.current.rotation.set(currentValues.current.rotX, currentValues.current.rotY, 0);
+    
+    // Update both materials' opacity
     materialRef.current.opacity = currentValues.current.opacity;
+    borderMaterialRef.current.opacity = currentValues.current.opacity;
   });
   
   // Parse color
@@ -125,7 +129,12 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
       {/* White border/frame */}
       <mesh position={[0, 0, -0.02]} castShadow receiveShadow>
         <boxGeometry args={[2.0, 1.4, 0.03]} />
-        <meshStandardMaterial color="white" transparent opacity={currentValues.current.opacity} />
+        <meshStandardMaterial 
+          ref={borderMaterialRef}
+          color="white" 
+          transparent 
+          opacity={1} 
+        />
       </mesh>
       
       {/* Photo/Card surface */}
