@@ -27,15 +27,16 @@ const GalleryPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [clearSelection]);
   
-  // Scroll handler
+  // Scroll handler - only tracks first 2 sections (200vh)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
-      const scrollHeight = container.scrollHeight - container.clientHeight;
-      const progress = scrollTop / scrollHeight * 2; // 0 to 2 range
+      // Progress 0-2 over first 200vh (hero + gallery sections)
+      const maxScroll = window.innerHeight * 2;
+      const progress = Math.min(2, scrollTop / window.innerHeight);
       setScrollProgress(progress);
     };
     
@@ -44,8 +45,11 @@ const GalleryPage = () => {
   }, [setScrollProgress]);
 
   // Determine which UI elements to show based on scroll
-  const showCaseMenu = scrollProgress > 0.6 && scrollProgress < 1.5;
-  const showTagline = scrollProgress > 0.6 && scrollProgress < 1.5;
+  const showCaseMenu = scrollProgress > 0.6 && scrollProgress < 1.8;
+  const showTagline = scrollProgress > 0.6 && scrollProgress < 1.8;
+  
+  // 3D section opacity - fade out as we enter text section
+  const canvasOpacity = scrollProgress < 1.5 ? 1 : Math.max(0, 1 - (scrollProgress - 1.5) / 0.5);
 
   return (
     <motion.div 
@@ -55,8 +59,15 @@ const GalleryPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Fixed 3D canvas that responds to scroll - pointer-events-none to allow scroll through */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
+      {/* SECTION 1 & 2: Fixed 3D canvas for hero + gallery (first 200vh) */}
+      <div 
+        className="fixed inset-0 pointer-events-none" 
+        style={{ 
+          zIndex: 10,
+          opacity: canvasOpacity,
+          visibility: scrollProgress >= 2 ? 'hidden' : 'visible'
+        }}
+      >
         {/* Grid background */}
         <GridBackground />
         
@@ -77,7 +88,7 @@ const GalleryPage = () => {
           </Suspense>
         </div>
         
-        {/* Hero section overlay */}
+        {/* Hero section overlay - visible in section 1 */}
         <HeroSection />
         
         {/* Case menu on right side - only in gallery mode */}
@@ -91,15 +102,15 @@ const GalleryPage = () => {
         {showTagline && <Tagline />}
       </div>
       
-      {/* Scrollable content sections */}
+      {/* Scrollable content that creates the scroll height */}
       <div className="relative">
-        {/* Section 1: Hero - just creates scroll space */}
+        {/* Section 1: Hero - creates scroll space */}
         <div style={{ height: '100vh' }} />
         
-        {/* Section 2: Gallery - just creates scroll space */}
+        {/* Section 2: Gallery - creates scroll space */}
         <div style={{ height: '100vh' }} />
         
-        {/* Section 3: Text Section - actually rendered in scroll flow */}
+        {/* SECTION 3: Text Section - actually rendered, scrolls over the fixed content */}
         <div className="relative bg-background" style={{ zIndex: 20 }}>
           <TextSection />
         </div>
