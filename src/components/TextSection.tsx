@@ -4,13 +4,17 @@ import { useScrollProgress } from '@/hooks/useScrollProgress';
 const TextSection = () => {
   const scrollProgress = useScrollProgress((state) => state.scrollProgress);
   
-  // Start fading in when scroll reaches gallery section (progress > 1.5)
-  const sectionProgress = Math.max(0, Math.min(1, (scrollProgress - 1.5) / 0.5));
+  // Only show text section when gallery is completely scrolled past (progress > 1.8)
+  // Gallery cards should fade out first, then text section fades in
+  const sectionProgress = Math.max(0, Math.min(1, (scrollProgress - 1.8) / 0.2));
   const opacity = sectionProgress;
+  
+  // Don't render at all if not visible
+  if (opacity < 0.01) return null;
   
   return (
     <div 
-      className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
+      className="absolute inset-0 z-20 pointer-events-none flex items-center justify-center"
       style={{ opacity }}
     >
       <div className="w-full max-w-7xl mx-auto px-8 md:px-16 lg:px-24 relative">
