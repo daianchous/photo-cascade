@@ -1,7 +1,7 @@
-import PhotoGallery from "@/components/PhotoGallery";
+import GalleryPage from "@/components/GalleryPage";
 
 const Index = () => {
-  return <PhotoGallery />;
+  return <GalleryPage />;
 };
 
 export default Index;
