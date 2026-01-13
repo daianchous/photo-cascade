@@ -56,28 +56,6 @@ const categories = [
   "temps",
 ];
 
-// Generate varied colors for placeholder cards - more photo-like colors
-const colors = [
-  // Earth tones
-  "#8B4513", "#A0522D", "#D2691E", "#CD853F", "#DEB887",
-  // Greens
-  "#556B2F", "#6B8E23", "#228B22", "#2E8B57", "#3CB371",
-  // Blues
-  "#4682B4", "#5F9EA0", "#4169E1", "#6495ED", "#87CEEB",
-  // Warm tones
-  "#B8860B", "#DAA520", "#F4A460", "#E9967A", "#FA8072",
-  // Cool tones
-  "#2F4F4F", "#708090", "#778899", "#A9A9A9", "#696969",
-  // Vibrant
-  "#8B0000", "#DC143C", "#FF6347", "#FF4500", "#FF8C00",
-  // Purple/Pink
-  "#483D8B", "#6A5ACD", "#9370DB", "#BA55D3", "#DA70D6",
-  // Dark moody
-  "#1a1a2e", "#16213e", "#0f3460", "#1f4068", "#162447",
-  // Muted pastels
-  "#B5838D", "#6D6875", "#E5989B", "#FFB4A2", "#FFCDB2",
-];
-
 export const generatePhotos = (count: number, startId: number = 0): PhotoData[] => {
   return Array.from({ length: count }, (_, i) => {
     const id = startId + i;
@@ -90,14 +68,13 @@ export const generatePhotos = (count: number, startId: number = 0): PhotoData[] 
       timestamp: `Today, ${hour}:${minute}:${second}`,
       location: locations[Math.floor(Math.random() * locations.length)],
       source: sources[Math.floor(Math.random() * sources.length)],
-      color: colors[id % colors.length],
+      color: `hsl(${(id * 47) % 360}, ${35 + (id % 30)}%, ${42 + (id % 18)}%)`,
       category: categories[Math.floor(Math.random() * categories.length)],
     };
   });
 };
 
-export const leftStackPhotos = generatePhotos(80, 0);
-export const rightStackPhotos = generatePhotos(80, 80);
+export const leftStackPhotos = generatePhotos(150, 0);
 
 export const categoryTags = [
   { name: "all", count: 2347 },
