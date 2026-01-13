@@ -3,28 +3,35 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera } from '@react-three/drei';
 import { cases } from '@/data/casesData';
 import { useGalleryState } from '@/hooks/useGalleryState';
+import { useScrollProgress } from '@/hooks/useScrollProgress';
 import CaseCard3D from './CaseCard3D';
+import HeroPhotos from './HeroPhotos';
 import * as THREE from 'three';
 
 // Camera controller
 const CameraController = () => {
   const { camera } = useThree();
   const { hoveredCaseId } = useGalleryState();
+  const scrollProgress = useScrollProgress((state) => state.scrollProgress);
   
-  const targetPosition = useRef(new THREE.Vector3(0, 0, 20));
-  const targetLookAt = useRef(new THREE.Vector3(0, 0, 0));
+  const targetPosition = useRef(new THREE.Vector3(0, 2, 25));
+  const targetLookAt = useRef(new THREE.Vector3(0, 1, 0));
   
   useEffect(() => {
-    if (hoveredCaseId) {
-      // Zoom in slightly when a card is selected
+    if (hoveredCaseId && scrollProgress > 0.8) {
+      // Zoom in when a card is selected in gallery mode
       targetPosition.current.set(0, 0, 16);
       targetLookAt.current.set(0, 0, 0);
-    } else {
-      // Default view: centered on the row
+    } else if (scrollProgress > 0.8) {
+      // Gallery view
       targetPosition.current.set(0, 0, 20);
       targetLookAt.current.set(0, 0, 0);
+    } else {
+      // Hero view - camera looking at hero photos
+      targetPosition.current.set(0, 2, 25);
+      targetLookAt.current.set(0, 1, 0);
     }
-  }, [hoveredCaseId]);
+  }, [hoveredCaseId, scrollProgress]);
   
   useFrame((state, delta) => {
     const lerpFactor = 1 - Math.pow(0.001, delta);
@@ -54,7 +61,10 @@ const Scene = () => {
       {/* Subtle rim light */}
       <pointLight position={[0, -5, 15]} intensity={0.2} color="#ffffff" />
       
-      {/* Render all case cards */}
+      {/* Hero photos that animate from hero to gallery */}
+      <HeroPhotos totalCases={cases.length} />
+      
+      {/* Render other case cards (excluding hero indices) */}
       {cases.map((caseData, index) => (
         <CaseCard3D
           key={caseData.id}
@@ -84,7 +94,7 @@ const CaseGallery3D = () => {
       >
         <PerspectiveCamera
           makeDefault
-          position={[0, 0, 20]}
+          position={[0, 2, 25]}
           fov={50}
           near={0.1}
           far={500}

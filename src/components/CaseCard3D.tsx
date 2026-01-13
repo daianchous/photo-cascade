@@ -1,33 +1,43 @@
 import { useRef, useMemo } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { CaseData } from '@/data/casesData';
 import { useGalleryState } from '@/hooks/useGalleryState';
+import { useScrollProgress } from '@/hooks/useScrollProgress';
 import * as THREE from 'three';
 
 interface CaseCard3DProps {
   caseData: CaseData;
   index: number;
   totalCases: number;
+  isHeroPhoto?: boolean; // Skip if this index is handled by HeroPhotos
 }
 
-const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
+// Hero photo indices that are handled separately
+const HERO_PHOTO_INDICES = [6, 7, 8];
+
+const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProps) => {
   const meshRef = useRef<THREE.Group>(null);
   const materialRef = useRef<THREE.MeshStandardMaterial>(null);
   const borderMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
-  const { camera } = useThree();
+  
   const { hoveredCaseId, setHoveredCaseId } = useGalleryState();
+  const scrollProgress = useScrollProgress((state) => state.scrollProgress);
+  
+  // Skip rendering if this is a hero photo index
+  if (HERO_PHOTO_INDICES.includes(index)) {
+    return null;
+  }
   
   // Calculate center offset for the strip
   const centerOffset = (totalCases - 1) / 2;
   
   // Calculate base position - overlapping horizontal row with perspective
   const basePosition = useMemo(() => {
-    const spacing = 1.4; // Tighter spacing for overlap
+    const spacing = 1.4;
     const x = (index - centerOffset) * spacing;
     const y = 0;
-    // Cards towards edges are further back, creating depth
     const distFromCenter = Math.abs(index - centerOffset);
-    const z = -distFromCenter * 0.3 + index * 0.1; // Each card slightly in front of previous
+    const z = -distFromCenter * 0.3 + index * 0.1;
     return new THREE.Vector3(x, y, z);
   }, [index, centerOffset]);
   
@@ -45,11 +55,11 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   // Store current values for smooth animation
   const currentValues = useRef({
     scale: 1,
-    opacity: 1,
+    opacity: 0,
     posX: basePosition.x,
-    posY: basePosition.y,
+    posY: basePosition.y - 20, // Start below
     posZ: basePosition.z,
-    rotY: 0.3, // Slight rotation for perspective
+    rotY: 0.3,
     borderOpacity: 0,
   });
   
@@ -59,7 +69,15 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
     
     const lerpSpeed = 3 * delta;
     
-    if (isHovered) {
+    // Cards fade in as scroll reaches gallery section
+    const galleryVisibility = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
+    const inGalleryMode = scrollProgress > 0.5;
+    
+    if (!inGalleryMode) {
+      // Before gallery mode - cards stay hidden/below
+      currentValues.current.posY += (basePosition.y - 20 - currentValues.current.posY) * lerpSpeed;
+      currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
+    } else if (isHovered) {
       // Selected card: center of screen, larger, with pink border
       currentValues.current.posX += (0 - currentValues.current.posX) * lerpSpeed;
       currentValues.current.posY += (0 - currentValues.current.posY) * lerpSpeed;
@@ -77,16 +95,16 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
       currentValues.current.posY += (basePosition.y - currentValues.current.posY) * lerpSpeed;
       currentValues.current.posZ += (basePosition.z - 5 - currentValues.current.posZ) * lerpSpeed;
       currentValues.current.scale += (0.6 - currentValues.current.scale) * lerpSpeed;
-      currentValues.current.opacity += (0.5 - currentValues.current.opacity) * lerpSpeed;
+      currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
       currentValues.current.rotY += (0.3 - currentValues.current.rotY) * lerpSpeed;
       currentValues.current.borderOpacity += (0 - currentValues.current.borderOpacity) * lerpSpeed;
     } else {
-      // Default state: horizontal row with slight perspective rotation
+      // Default state: horizontal row with perspective - fade in based on scroll
       currentValues.current.posX += (basePosition.x - currentValues.current.posX) * lerpSpeed;
       currentValues.current.posY += (basePosition.y - currentValues.current.posY) * lerpSpeed;
       currentValues.current.posZ += (basePosition.z - currentValues.current.posZ) * lerpSpeed;
       currentValues.current.scale += (1 - currentValues.current.scale) * lerpSpeed;
-      currentValues.current.opacity += (1 - currentValues.current.opacity) * lerpSpeed;
+      currentValues.current.opacity += (galleryVisibility - currentValues.current.opacity) * lerpSpeed;
       currentValues.current.rotY += (0.3 - currentValues.current.rotY) * lerpSpeed;
       currentValues.current.borderOpacity += (0 - currentValues.current.borderOpacity) * lerpSpeed;
     }
@@ -114,6 +132,9 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   // Handle click to toggle selection
   const handleClick = (e: any) => {
     e.stopPropagation();
+    // Only allow interaction when in gallery mode
+    if (scrollProgress < 0.8) return;
+    
     if (isHovered) {
       setHoveredCaseId(null);
     } else {
@@ -124,11 +145,11 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
   return (
     <group
       ref={meshRef}
-      position={[basePosition.x, basePosition.y, basePosition.z]}
+      position={[basePosition.x, basePosition.y - 20, basePosition.z]}
       rotation={[0, 0.3, 0]}
       onClick={handleClick}
       onPointerEnter={() => {
-        document.body.style.cursor = 'pointer';
+        if (scrollProgress >= 0.8) document.body.style.cursor = 'pointer';
       }}
       onPointerLeave={() => {
         document.body.style.cursor = 'auto';
@@ -154,7 +175,7 @@ const CaseCard3D = ({ caseData, index, totalCases }: CaseCard3DProps) => {
           ref={materialRef}
           color={color}
           transparent
-          opacity={1}
+          opacity={0}
           roughness={0.3}
           metalness={0.05}
         />
