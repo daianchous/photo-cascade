@@ -6,7 +6,7 @@ import { useGalleryState } from '@/hooks/useGalleryState';
 import CaseCard3D from './CaseCard3D';
 import * as THREE from 'three';
 
-// Camera controller that follows hover/selection
+// Camera controller - stays mostly static, cards animate instead
 const CameraController = () => {
   const { camera } = useThree();
   const { hoveredCaseId, activeTag } = useGalleryState();
@@ -16,17 +16,9 @@ const CameraController = () => {
   
   useEffect(() => {
     if (hoveredCaseId) {
-      // Find the hovered case index
-      const index = cases.findIndex(c => c.id === hoveredCaseId);
-      if (index !== -1) {
-        const spacing = 0.4;
-        const x = index * spacing;
-        const y = index * spacing * 0.5;
-        
-        // Move camera to focus on hovered card - closer and more centered
-        targetPosition.current.set(x - 12, y + 8, 30);
-        targetLookAt.current.set(x + 3, y + 3, 0);
-      }
+      // Slight camera adjustment when hovering - keep it subtle
+      targetPosition.current.set(-12, 18, 42);
+      targetLookAt.current.set(15, 12, 0);
     } else if (activeTag !== 'all') {
       // Find center of matching cards
       const matchingIndices = cases
@@ -43,16 +35,14 @@ const CameraController = () => {
         targetLookAt.current.set(x + 5, y + 5, 0);
       }
     } else {
-      // Default wide view - showing the full diagonal strip
+      // Default wide view
       targetPosition.current.set(-15, 20, 45);
       targetLookAt.current.set(20, 15, 0);
     }
   }, [hoveredCaseId, activeTag]);
   
   useFrame((state, delta) => {
-    // Smooth camera movement with damped lerp
     const lerpFactor = 1 - Math.pow(0.001, delta);
-    
     camera.position.lerp(targetPosition.current, lerpFactor * 0.8);
     camera.lookAt(targetLookAt.current);
   });
