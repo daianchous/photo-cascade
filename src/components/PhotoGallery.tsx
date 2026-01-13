@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { leftStackPhotos, rightStackPhotos, PhotoData } from "@/data/photoData";
-import PhotoStack from "./PhotoStack";
+import { leftStackPhotos, PhotoData } from "@/data/photoData";
+import PhotoRow from "./PhotoRow";
 import ActivePhoto from "./ActivePhoto";
 import CategorySidebar from "./CategorySidebar";
 import Header from "./Header";
@@ -43,10 +43,9 @@ const PhotoGallery = () => {
     if (photo) {
       setHoveredPhoto(photo);
     } else {
-      // Delay hiding to allow smooth transition
       timeoutRef.current = setTimeout(() => {
         setHoveredPhoto(null);
-      }, 150);
+      }, 100);
     }
   }, []);
 
@@ -54,21 +53,11 @@ const PhotoGallery = () => {
     <div className="relative w-full h-screen overflow-hidden bg-background">
       <Header currentTime={currentTime} currentDate={currentDate} />
       
-      {/* Photo stacks */}
-      <PhotoStack
+      {/* Single diagonal photo row */}
+      <PhotoRow
         photos={leftStackPhotos}
-        position="left"
         hoveredPhoto={hoveredPhoto}
         onPhotoHover={handlePhotoHover}
-        isMinimized={hoveredPhoto !== null}
-      />
-      
-      <PhotoStack
-        photos={rightStackPhotos}
-        position="right"
-        hoveredPhoto={hoveredPhoto}
-        onPhotoHover={handlePhotoHover}
-        isMinimized={hoveredPhoto !== null}
       />
 
       {/* Active/hovered photo display */}
