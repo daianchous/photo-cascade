@@ -55,7 +55,7 @@ const GalleryPage = () => {
       transition={{ duration: 0.8 }}
     >
       {/* Fixed 3D canvas layer that responds to scroll */}
-      <div className="fixed inset-0">
+      <div className="fixed inset-0 z-10">
         {/* Grid background */}
         <GridBackground />
         
@@ -91,7 +91,7 @@ const GalleryPage = () => {
       </div>
       
       {/* Scrollable content wrapper - 2 sections (invisible but creates scroll height) */}
-      <div className="relative" style={{ height: '200vh' }} />
+      <div className="relative z-0 pointer-events-none" style={{ height: '200vh' }} />
     </motion.div>
   );
 };
