@@ -84,6 +84,8 @@ const CaseGallery3D = () => {
     <div className="absolute inset-0">
       <Canvas
         shadows
+        onPointerDown={() => console.log('[Canvas] pointer down')}
+        onPointerMissed={() => console.log('[Canvas] pointer missed')}
         gl={{ 
           antialias: true, 
           alpha: true,

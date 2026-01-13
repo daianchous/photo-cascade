@@ -132,6 +132,10 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
   
   const handleClick = (e: any) => {
     e.stopPropagation();
+
+    // Debug: ensure clicks reach the mesh
+    console.log('[HeroPhoto click]', { id: caseId, scrollProgress, inGalleryMode });
+
     // Only allow interaction when in gallery mode
     if (!inGalleryMode) return;
     
