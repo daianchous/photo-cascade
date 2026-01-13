@@ -6,42 +6,43 @@
 
 @layer base {
   :root {
-    --background: 0 0% 93%;
-    --foreground: 0 0% 10%;
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 10%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 0 0% 15%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 0 0% 95%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 20%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 90%;
 
-    --muted: 0 0% 85%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 55%;
 
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 15%;
+    --accent: 300 60% 70%;
+    --accent-foreground: 0 0% 5%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 80%;
-    --input: 0 0% 80%;
-    --ring: 0 0% 30%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 70%;
 
     --radius: 0rem;
 
     /* Photo gallery specific */
-    --photo-border: 0 0% 100%;
+    --photo-border: 300 60% 70%;
     --photo-shadow: 0 0% 0%;
-    --info-text: 0 0% 25%;
+    --info-text: 0 0% 80%;
     --tag-text: 0 0% 50%;
-    --tag-hover: 0 0% 20%;
+    --tag-hover: 0 0% 90%;
+    --grid-line: 0 0% 15%;
 
     /* Stack transforms */
     --stack-left-rotate-x: 60deg;
@@ -55,28 +56,29 @@
   }
 
   .dark {
-    --background: 0 0% 8%;
+    --background: 0 0% 5%;
     --foreground: 0 0% 95%;
-    --card: 0 0% 12%;
+    --card: 0 0% 10%;
     --card-foreground: 0 0% 95%;
-    --popover: 0 0% 12%;
+    --popover: 0 0% 10%;
     --popover-foreground: 0 0% 95%;
     --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 18%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 90%;
-    --muted: 0 0% 25%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 95%;
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 300 60% 70%;
+    --accent-foreground: 0 0% 5%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
     --ring: 0 0% 70%;
-    --photo-border: 0 0% 90%;
+    --photo-border: 300 60% 70%;
     --photo-shadow: 0 0% 0%;
     --info-text: 0 0% 80%;
     --tag-text: 0 0% 55%;
     --tag-hover: 0 0% 90%;
+    --grid-line: 0 0% 15%;
   }
 }
 

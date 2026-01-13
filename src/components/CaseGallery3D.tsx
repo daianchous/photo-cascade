@@ -6,40 +6,25 @@ import { useGalleryState } from '@/hooks/useGalleryState';
 import CaseCard3D from './CaseCard3D';
 import * as THREE from 'three';
 
-// Camera controller - stays mostly static, cards animate instead
+// Camera controller
 const CameraController = () => {
   const { camera } = useThree();
-  const { hoveredCaseId, activeTag } = useGalleryState();
+  const { hoveredCaseId } = useGalleryState();
   
-  const targetPosition = useRef(new THREE.Vector3(-2, 5, 25));
-  const targetLookAt = useRef(new THREE.Vector3(3, 2, 0));
+  const targetPosition = useRef(new THREE.Vector3(0, 0, 20));
+  const targetLookAt = useRef(new THREE.Vector3(0, 0, 0));
   
   useEffect(() => {
     if (hoveredCaseId) {
-      // Slight camera adjustment when selected
-      targetPosition.current.set(0, 4, 22);
-      targetLookAt.current.set(3, 2, 0);
-    } else if (activeTag !== 'all') {
-      // Find center of matching cards
-      const matchingIndices = cases
-        .map((c, i) => c.tags.includes(activeTag) ? i : -1)
-        .filter(i => i !== -1);
-      
-      if (matchingIndices.length > 0) {
-        const avgIndex = matchingIndices.reduce((a, b) => a + b, 0) / matchingIndices.length;
-        const spacing = 0.4;
-        const x = avgIndex * spacing;
-        const y = avgIndex * spacing * 0.5;
-        
-        targetPosition.current.set(x - 3, y + 3, 20);
-        targetLookAt.current.set(x + 2, y + 1, 0);
-      }
+      // Zoom in slightly when a card is selected
+      targetPosition.current.set(0, 0, 16);
+      targetLookAt.current.set(0, 0, 0);
     } else {
-      // Default centered view for 15 photos
-      targetPosition.current.set(-2, 5, 25);
-      targetLookAt.current.set(3, 2, 0);
+      // Default view: centered on the row
+      targetPosition.current.set(0, 0, 20);
+      targetLookAt.current.set(0, 0, 0);
     }
-  }, [hoveredCaseId, activeTag]);
+  }, [hoveredCaseId]);
   
   useFrame((state, delta) => {
     const lerpFactor = 1 - Math.pow(0.001, delta);
@@ -53,24 +38,21 @@ const CameraController = () => {
 const Scene = () => {
   return (
     <>
-      {/* Soft ambient lighting */}
-      <ambientLight intensity={0.7} />
+      {/* Ambient lighting */}
+      <ambientLight intensity={0.6} />
       
-      {/* Main directional light with shadows */}
+      {/* Main directional light */}
       <directionalLight 
-        position={[20, 30, 20]} 
-        intensity={0.6}
+        position={[10, 15, 20]} 
+        intensity={0.7}
         castShadow
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={100}
-        shadow-camera-left={-50}
-        shadow-camera-right={50}
-        shadow-camera-top={50}
-        shadow-camera-bottom={-50}
       />
       
-      {/* Fill light */}
-      <directionalLight position={[-10, 15, -10]} intensity={0.3} />
+      {/* Fill light from left */}
+      <directionalLight position={[-10, 5, 10]} intensity={0.3} />
+      
+      {/* Subtle rim light */}
+      <pointLight position={[0, -5, 15]} intensity={0.2} color="#ffffff" />
       
       {/* Render all case cards */}
       {cases.map((caseData, index) => (
@@ -102,8 +84,8 @@ const CaseGallery3D = () => {
       >
         <PerspectiveCamera
           makeDefault
-          position={[-2, 5, 25]}
-          fov={45}
+          position={[0, 0, 20]}
+          fov={50}
           near={0.1}
           far={500}
         />
