@@ -1,10 +1,9 @@
 import { useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import CaseGallery3D from './CaseGallery3D';
-import TagMenu from './TagMenu';
-import GalleryHeader from './GalleryHeader';
-import HoveredCardInfo from './HoveredCardInfo';
-import FooterActions from './FooterActions';
+import CaseMenu from './CaseMenu';
+import GridBackground from './GridBackground';
+import Tagline from './Tagline';
 import { useGalleryState } from '@/hooks/useGalleryState';
 
 const GalleryPage = () => {
@@ -29,7 +28,8 @@ const GalleryPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      <GalleryHeader />
+      {/* Grid background */}
+      <GridBackground />
       
       {/* 3D Gallery Canvas */}
       <Suspense fallback={
@@ -46,14 +46,11 @@ const GalleryPage = () => {
         <CaseGallery3D />
       </Suspense>
       
-      {/* Hovered card info overlay */}
-      <HoveredCardInfo />
+      {/* Case menu on right side */}
+      <CaseMenu />
       
-      {/* Tag filter menu */}
-      <TagMenu />
-      
-      {/* Footer actions */}
-      <FooterActions />
+      {/* Bottom tagline */}
+      <Tagline />
     </motion.div>
   );
 };
