@@ -27,15 +27,16 @@ const GalleryPage = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [clearSelection]);
   
-  // Scroll handler
+  // Scroll handler - tracks scroll through first 2 sections (200vh)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     
     const handleScroll = () => {
       const scrollTop = container.scrollTop;
-      const scrollHeight = container.scrollHeight - container.clientHeight;
-      const progress = scrollTop / scrollHeight * 2; // 0 to 2 range
+      const viewportHeight = container.clientHeight;
+      // Progress 0-1 for first section, 1-2 for second section
+      const progress = Math.min(2, scrollTop / viewportHeight);
       setScrollProgress(progress);
     };
     
@@ -44,8 +45,8 @@ const GalleryPage = () => {
   }, [setScrollProgress]);
 
   // Determine which UI elements to show based on scroll
-  const showCaseMenu = scrollProgress > 0.6 && scrollProgress < 1.5;
-  const showTagline = scrollProgress > 0.6 && scrollProgress < 1.5;
+  const showCaseMenu = scrollProgress > 0.7 && scrollProgress < 1.8;
+  const showTagline = scrollProgress > 0.7 && scrollProgress < 1.8;
 
   return (
     <motion.div 
@@ -55,55 +56,61 @@ const GalleryPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Fixed 3D canvas that responds to scroll - pointer-events-none to allow scroll through */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
-        {/* Grid background */}
-        <GridBackground />
-        
-        {/* 3D Gallery Canvas - needs pointer events for card clicks */}
-        <div className="pointer-events-auto">
-          <Suspense fallback={
-            <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div 
-                className="text-muted-foreground"
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                Loading gallery...
-              </motion.div>
-            </div>
-          }>
-            <CaseGallery3D />
-          </Suspense>
-        </div>
-        
-        {/* Hero section overlay */}
-        <HeroSection />
-        
-        {/* Case menu on right side - only in gallery mode */}
-        {showCaseMenu && (
+      {/* BLOCK 1: Hero Section - 100vh */}
+      <section className="relative h-screen">
+        {/* Fixed 3D canvas for hero and gallery - spans first 2 sections */}
+        <div 
+          className="fixed inset-0 pointer-events-none"
+          style={{ 
+            zIndex: 5,
+            opacity: scrollProgress < 2 ? 1 : 0,
+            transition: 'opacity 0.3s ease'
+          }}
+        >
+          {/* Grid background */}
+          <GridBackground />
+          
+          {/* 3D Gallery Canvas */}
           <div className="pointer-events-auto">
-            <CaseMenu />
+            <Suspense fallback={
+              <div className="absolute inset-0 flex items-center justify-center">
+                <motion.div 
+                  className="text-muted-foreground"
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  Loading gallery...
+                </motion.div>
+              </div>
+            }>
+              <CaseGallery3D />
+            </Suspense>
           </div>
-        )}
-        
-        {/* Bottom tagline - only in gallery mode */}
-        {showTagline && <Tagline />}
-      </div>
-      
-      {/* Scrollable content sections */}
-      <div className="relative">
-        {/* Section 1: Hero - just creates scroll space */}
-        <div style={{ height: '100vh' }} />
-        
-        {/* Section 2: Gallery - just creates scroll space */}
-        <div style={{ height: '100vh' }} />
-        
-        {/* Section 3: Text Section - actually rendered in scroll flow */}
-        <div className="relative bg-background" style={{ zIndex: 20 }}>
-          <TextSection />
+          
+          {/* Hero section overlay - only visible in Block 1 */}
+          <HeroSection />
+          
+          {/* Case menu - only visible in Block 2 */}
+          {showCaseMenu && (
+            <div className="pointer-events-auto">
+              <CaseMenu />
+            </div>
+          )}
+          
+          {/* Tagline - only visible in Block 2 */}
+          {showTagline && <Tagline />}
         </div>
-      </div>
+      </section>
+      
+      {/* BLOCK 2: Gallery Section - 100vh (content handled by fixed 3D canvas) */}
+      <section className="relative h-screen">
+        {/* Empty - visual content is in the fixed 3D layer */}
+      </section>
+      
+      {/* BLOCK 3: Text Section - scrolls into view normally */}
+      <section className="relative z-10">
+        <TextSection />
+      </section>
     </motion.div>
   );
 };
