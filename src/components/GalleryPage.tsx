@@ -44,7 +44,7 @@ const GalleryPage = () => {
   }, [setScrollProgress]);
 
   // Determine which UI elements to show based on scroll
-  const showCaseMenu = scrollProgress > 0.6;
+  const showCaseMenu = scrollProgress > 0.6 && scrollProgress < 1.5;
   const showTagline = scrollProgress > 0.6 && scrollProgress < 1.5;
 
   return (
@@ -56,7 +56,7 @@ const GalleryPage = () => {
       transition={{ duration: 0.8 }}
     >
       {/* Fixed 3D canvas that responds to scroll - pointer-events-none to allow scroll through */}
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 10 }}>
         {/* Grid background */}
         <GridBackground />
         
@@ -80,9 +80,6 @@ const GalleryPage = () => {
         {/* Hero section overlay */}
         <HeroSection />
         
-        {/* Text section overlay */}
-        <TextSection />
-        
         {/* Case menu on right side - only in gallery mode */}
         {showCaseMenu && (
           <div className="pointer-events-auto">
@@ -94,8 +91,19 @@ const GalleryPage = () => {
         {showTagline && <Tagline />}
       </div>
       
-      {/* Scrollable content wrapper - 3 sections (invisible but creates scroll height) */}
-      <div className="relative" style={{ height: '300vh' }} />
+      {/* Scrollable content sections */}
+      <div className="relative">
+        {/* Section 1: Hero - just creates scroll space */}
+        <div style={{ height: '100vh' }} />
+        
+        {/* Section 2: Gallery - just creates scroll space */}
+        <div style={{ height: '100vh' }} />
+        
+        {/* Section 3: Text Section - actually rendered in scroll flow */}
+        <div className="relative bg-background" style={{ zIndex: 20 }}>
+          <TextSection />
+        </div>
+      </div>
     </motion.div>
   );
 };
