@@ -69,13 +69,18 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
     
     const lerpSpeed = 3 * delta;
     
-    // Cards fade in as scroll reaches gallery section (no fade out - text scrolls over)
-    const galleryVisibility = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
-    const inGalleryMode = scrollProgress > 0.5;
+    // Cards fade in as scroll reaches gallery section, fade out when reaching text section
+    const galleryFadeIn = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
+    const galleryFadeOut = Math.max(0, 1 - Math.max(0, (scrollProgress - 1.5) / 0.3));
+    const galleryVisibility = galleryFadeIn * galleryFadeOut;
+    const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
     
-    if (!inGalleryMode) {
+    if (!inGalleryMode && scrollProgress <= 0.5) {
       // Before gallery mode - cards stay hidden/below
       currentValues.current.posY += (basePosition.y - 20 - currentValues.current.posY) * lerpSpeed;
+      currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
+    } else if (!inGalleryMode && scrollProgress >= 1.8) {
+      // After gallery mode (text section) - fade out
       currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
     } else if (isHovered) {
       // Selected card: center of screen, larger, with pink border
@@ -99,7 +104,7 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
       currentValues.current.rotY += (0.3 - currentValues.current.rotY) * lerpSpeed;
       currentValues.current.borderOpacity += (0 - currentValues.current.borderOpacity) * lerpSpeed;
     } else {
-      // Default state: horizontal row with perspective - fade in based on scroll
+      // Default state: horizontal row with perspective - fade in/out based on scroll
       currentValues.current.posX += (basePosition.x - currentValues.current.posX) * lerpSpeed;
       currentValues.current.posY += (basePosition.y - currentValues.current.posY) * lerpSpeed;
       currentValues.current.posZ += (basePosition.z - currentValues.current.posZ) * lerpSpeed;

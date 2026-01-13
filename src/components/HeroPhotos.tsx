@@ -60,21 +60,33 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
     
     const lerpSpeed = 3 * delta;
     
-    // Gallery is active when scrollProgress > 0.5
-    const inGalleryMode = scrollProgress > 0.5;
+    // Gallery is active when scrollProgress > 0.5 and < 1.8
+    const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
     
     // Interpolate between hero and gallery positions based on scroll
     const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
     
+    // Fade out when reaching text section
+    const fadeOut = Math.max(0, 1 - Math.max(0, (scrollProgress - 1.5) / 0.3));
+    
     let targetX: number, targetY: number, targetZ: number, targetScale: number, targetOpacity: number, targetRotY: number, targetBorderOpacity: number;
     
-    if (!inGalleryMode || !anyHovered) {
+    if (scrollProgress >= 1.8) {
+      // Text section - fade out completely
+      targetX = galleryPosition.x;
+      targetY = galleryPosition.y;
+      targetZ = galleryPosition.z;
+      targetScale = 1;
+      targetOpacity = 0;
+      targetRotY = 0.3;
+      targetBorderOpacity = 0;
+    } else if (!inGalleryMode || !anyHovered) {
       // Transitioning between hero and gallery default positions
       targetX = THREE.MathUtils.lerp(heroPosition[0], galleryPosition.x, transitionProgress);
       targetY = THREE.MathUtils.lerp(heroPosition[1], galleryPosition.y, transitionProgress);
       targetZ = THREE.MathUtils.lerp(heroPosition[2], galleryPosition.z, transitionProgress);
       targetScale = THREE.MathUtils.lerp(1.2, 1, transitionProgress);
-      targetOpacity = 1;
+      targetOpacity = fadeOut;
       targetRotY = THREE.MathUtils.lerp(0, 0.3, transitionProgress);
       targetBorderOpacity = 0;
     } else if (isHovered) {

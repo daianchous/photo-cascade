@@ -89,10 +89,7 @@ const CaseGallery3D = () => {
           alpha: true,
           powerPreference: 'high-performance'
         }}
-        style={{ background: 'transparent', touchAction: 'pan-y' }}
-        onCreated={({ gl }) => {
-          gl.domElement.style.touchAction = 'pan-y';
-        }}
+        style={{ background: 'transparent' }}
         dpr={[1, 2]}
       >
         <PerspectiveCamera
