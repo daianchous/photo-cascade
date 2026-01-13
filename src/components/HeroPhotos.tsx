@@ -45,8 +45,8 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
   const colorObj = useMemo(() => new THREE.Color(color), [color]);
   const accentColor = useMemo(() => new THREE.Color('hsl(300, 60%, 70%)'), []);
   
-  // Gallery is active when scrollProgress > 0.5 and < 1.8
-  const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
+  // Gallery is active when scrollProgress > 0.25 (now 0-1 range)
+  const inGalleryMode = scrollProgress > 0.25;
   
   const currentValues = useRef({
     scale: 1,
@@ -63,27 +63,12 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
     
     const lerpSpeed = 3 * delta;
     
-    // Gallery is active when scrollProgress > 0.5 and < 1.8
-    const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
-    
-    // Interpolate between hero and gallery positions based on scroll
-    const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
-    
-    // Fade out when reaching text section
-    const fadeOut = Math.max(0, 1 - Math.max(0, (scrollProgress - 1.5) / 0.3));
+    // Interpolate between hero and gallery positions based on scroll (now 0-1 range)
+    const transitionProgress = Math.min(1, Math.max(0, (scrollProgress - 0.15) / 0.25));
     
     let targetX: number, targetY: number, targetZ: number, targetScale: number, targetOpacity: number, targetRotY: number, targetBorderOpacity: number;
     
-    if (scrollProgress >= 1.8) {
-      // Text section - fade out completely
-      targetX = galleryPosition.x;
-      targetY = galleryPosition.y;
-      targetZ = galleryPosition.z;
-      targetScale = 1;
-      targetOpacity = 0;
-      targetRotY = 0.3;
-      targetBorderOpacity = 0;
-    } else if (inGalleryMode && isHovered) {
+    if (inGalleryMode && isHovered) {
       // Selected card in gallery mode - center and enlarge
       targetX = 0;
       targetY = 0;
@@ -110,7 +95,7 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       targetY = galleryPosition.y;
       targetZ = galleryPosition.z;
       targetScale = 1;
-      targetOpacity = fadeOut;
+      targetOpacity = 1;
       targetRotY = 0.3;
       targetBorderOpacity = 0;
     } else {
@@ -119,7 +104,7 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       targetY = THREE.MathUtils.lerp(heroPosition[1], galleryPosition.y, transitionProgress);
       targetZ = THREE.MathUtils.lerp(heroPosition[2], galleryPosition.z, transitionProgress);
       targetScale = THREE.MathUtils.lerp(1.2, 1, transitionProgress);
-      targetOpacity = fadeOut;
+      targetOpacity = 1;
       targetRotY = THREE.MathUtils.lerp(0, 0.3, transitionProgress);
       targetBorderOpacity = 0;
     }

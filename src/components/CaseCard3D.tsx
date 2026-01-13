@@ -69,18 +69,14 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
     
     const lerpSpeed = 3 * delta;
     
-    // Cards fade in as scroll reaches gallery section, fade out when reaching text section
-    const galleryFadeIn = Math.min(1, Math.max(0, (scrollProgress - 0.3) / 0.5));
-    const galleryFadeOut = Math.max(0, 1 - Math.max(0, (scrollProgress - 1.5) / 0.3));
-    const galleryVisibility = galleryFadeIn * galleryFadeOut;
-    const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
+    // Cards fade in as scroll reaches gallery section (now 0-1 range)
+    const galleryFadeIn = Math.min(1, Math.max(0, (scrollProgress - 0.15) / 0.25));
+    const galleryVisibility = galleryFadeIn;
+    const inGalleryMode = scrollProgress > 0.25;
     
-    if (!inGalleryMode && scrollProgress <= 0.5) {
+    if (!inGalleryMode && scrollProgress <= 0.25) {
       // Before gallery mode - cards stay hidden/below
       currentValues.current.posY += (basePosition.y - 20 - currentValues.current.posY) * lerpSpeed;
-      currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
-    } else if (!inGalleryMode && scrollProgress >= 1.8) {
-      // After gallery mode (text section) - fade out
       currentValues.current.opacity += (0 - currentValues.current.opacity) * lerpSpeed;
     } else if (isHovered) {
       // Selected card: center of screen, larger, with pink border
@@ -135,7 +131,7 @@ const CaseCard3D = ({ caseData, index, totalCases, isHeroPhoto }: CaseCard3DProp
   const accentColor = useMemo(() => new THREE.Color('hsl(300, 60%, 70%)'), []);
   
   // Check if we're in gallery mode for interactions
-  const inGalleryMode = scrollProgress > 0.5 && scrollProgress < 1.8;
+  const inGalleryMode = scrollProgress > 0.25;
   
   // Handle click to toggle selection
   const handleClick = (e: any) => {
