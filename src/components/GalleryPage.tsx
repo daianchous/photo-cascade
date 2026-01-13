@@ -55,14 +55,13 @@ const GalleryPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
     >
-      {/* Scrollable content wrapper - 3 sections */}
-      <div className="relative" style={{ height: '300vh' }}>
-        {/* Fixed 3D canvas that responds to scroll */}
-        <div className="fixed inset-0">
-          {/* Grid background */}
-          <GridBackground />
-          
-          {/* 3D Gallery Canvas */}
+      {/* Fixed 3D canvas that responds to scroll - pointer-events-none to allow scroll through */}
+      <div className="fixed inset-0 pointer-events-none">
+        {/* Grid background */}
+        <GridBackground />
+        
+        {/* 3D Gallery Canvas - needs pointer events for card clicks */}
+        <div className="pointer-events-auto">
           <Suspense fallback={
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div 
@@ -76,20 +75,27 @@ const GalleryPage = () => {
           }>
             <CaseGallery3D />
           </Suspense>
-          
-          {/* Hero section overlay */}
-          <HeroSection />
-          
-          {/* Text section overlay */}
-          <TextSection />
-          
-          {/* Case menu on right side - only in gallery mode */}
-          {showCaseMenu && <CaseMenu />}
-          
-          {/* Bottom tagline - only in gallery mode */}
-          {showTagline && <Tagline />}
         </div>
+        
+        {/* Hero section overlay */}
+        <HeroSection />
+        
+        {/* Text section overlay */}
+        <TextSection />
+        
+        {/* Case menu on right side - only in gallery mode */}
+        {showCaseMenu && (
+          <div className="pointer-events-auto">
+            <CaseMenu />
+          </div>
+        )}
+        
+        {/* Bottom tagline - only in gallery mode */}
+        {showTagline && <Tagline />}
       </div>
+      
+      {/* Scrollable content wrapper - 3 sections (invisible but creates scroll height) */}
+      <div className="relative" style={{ height: '300vh' }} />
     </motion.div>
   );
 };
