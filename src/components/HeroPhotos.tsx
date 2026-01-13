@@ -80,17 +80,8 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       targetOpacity = 0;
       targetRotY = 0.3;
       targetBorderOpacity = 0;
-    } else if (!inGalleryMode || !anyHovered) {
-      // Transitioning between hero and gallery default positions
-      targetX = THREE.MathUtils.lerp(heroPosition[0], galleryPosition.x, transitionProgress);
-      targetY = THREE.MathUtils.lerp(heroPosition[1], galleryPosition.y, transitionProgress);
-      targetZ = THREE.MathUtils.lerp(heroPosition[2], galleryPosition.z, transitionProgress);
-      targetScale = THREE.MathUtils.lerp(1.2, 1, transitionProgress);
-      targetOpacity = fadeOut;
-      targetRotY = THREE.MathUtils.lerp(0, 0.3, transitionProgress);
-      targetBorderOpacity = 0;
-    } else if (isHovered) {
-      // Selected card in gallery mode
+    } else if (inGalleryMode && isHovered) {
+      // Selected card in gallery mode - center and enlarge
       targetX = 0;
       targetY = 0;
       targetZ = 10;
@@ -98,7 +89,7 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       targetOpacity = 1;
       targetRotY = 0;
       targetBorderOpacity = 1;
-    } else {
+    } else if (inGalleryMode && anyHovered) {
       // Non-selected cards in gallery mode - split left/right
       const isLeftOfSelected = galleryIndex < hoveredIndex;
       const splitOffset = isLeftOfSelected ? -12 : 12;
@@ -109,6 +100,24 @@ const HeroPhoto = ({ index, color, heroPosition, galleryIndex, totalCases }: Her
       targetScale = 0.6;
       targetOpacity = 0;
       targetRotY = 0.3;
+      targetBorderOpacity = 0;
+    } else if (inGalleryMode) {
+      // Gallery mode, no selection - default gallery positions
+      targetX = galleryPosition.x;
+      targetY = galleryPosition.y;
+      targetZ = galleryPosition.z;
+      targetScale = 1;
+      targetOpacity = fadeOut;
+      targetRotY = 0.3;
+      targetBorderOpacity = 0;
+    } else {
+      // Hero/transition mode - interpolate between hero and gallery
+      targetX = THREE.MathUtils.lerp(heroPosition[0], galleryPosition.x, transitionProgress);
+      targetY = THREE.MathUtils.lerp(heroPosition[1], galleryPosition.y, transitionProgress);
+      targetZ = THREE.MathUtils.lerp(heroPosition[2], galleryPosition.z, transitionProgress);
+      targetScale = THREE.MathUtils.lerp(1.2, 1, transitionProgress);
+      targetOpacity = fadeOut;
+      targetRotY = THREE.MathUtils.lerp(0, 0.3, transitionProgress);
       targetBorderOpacity = 0;
     }
     
